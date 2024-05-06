@@ -14,6 +14,8 @@ tokenizer.pad_token = tokenizer.eos_token
 class FinetuneArguments:
     dataset_path: str = field(default="data/train")
     model_path: str = field(default="output")
+    evalData_path: str = field(default="data/eval")
+    
 
 def data_collator(features: list) -> dict:
     len_ids = [len(feature["input_ids"]) for feature in features]
@@ -77,11 +79,12 @@ def main():
     ).parse_args_into_dataclasses()
 
     dataset = datasets.load_from_disk(finetune_args.dataset_path)
+    evalData = datasets.load_from_disk(finetune_args.evalData_path)
 
     MambaLMHeadModel.forward = forward_with_loss
 
     model = MambaLMHeadModel.from_pretrained(
-        "state-spaces/mamba-130m",
+        "state-spaces/mamba-1.4b",
         device="cuda",
         dtype=torch.float32)
 
@@ -91,6 +94,7 @@ def main():
         model=model,
         args=training_args,
         data_collator=data_collator,
+        eval_dataset=
         train_dataset=dataset,
         callbacks=[TensorBoardCallback(writer)],
     )
