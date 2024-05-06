@@ -94,7 +94,7 @@ def main():
         model=model,
         args=training_args,
         data_collator=data_collator,
-        eval_dataset=
+        eval_dataset=evalData,
         train_dataset=dataset,
         callbacks=[TensorBoardCallback(writer)],
     )
